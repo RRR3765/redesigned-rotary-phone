@@ -1,148 +1,177 @@
+
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Elego Airways Display</title>
+  <title>Elego Airways Flight Display</title>
   <meta charset="UTF-8" />
   <style>
     body {
-      background: #ffffff;
-      color: #000000;
-      font-family: 'Segoe UI', sans-serif;
       margin: 0;
-      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0a0a0a;
+      color: white;
     }
+
     .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      background-color: #0a0a0a;
+      border-bottom: 4px solid #27ae60;
+    }
+
+    .logo {
+      height: 50px;
+    }
+
+    .flight-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .flight-number {
+      font-size: 20px;
+      color: #aaa;
+    }
+
+    .destination {
+      font-size: 42px;
+      font-weight: bold;
+      color: #27ae60;
+      margin-top: 5px;
+    }
+
+    .gate-status {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    .status-badge {
       background-color: #27ae60;
-      padding: 20px;
-      text-align: center;
+      color: white;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 14px;
+      text-transform: uppercase;
     }
-    .header img {
-      width: 180px;
+
+    .gate {
+      margin-top: 10px;
+      background-color: #1c1c1c;
+      color: white;
+      font-size: 32px;
+      font-weight: bold;
+      padding: 10px 20px;
+      border-radius: 12px;
+      border: 2px solid #27ae60;
     }
-    .content {
+
+    .main {
+      background-color: #1c1c1c;
+      color: white;
       padding: 40px;
       text-align: center;
     }
-    .flight-row {
+
+    .boarding {
+      font-size: 28px;
+      margin-bottom: 30px;
+      color: #27ae60;
+    }
+
+    .time-blocks {
       display: flex;
       justify-content: center;
-      gap: 60px;
-      margin: 30px 0;
+      gap: 100px;
+      font-size: 18px;
     }
-    .flight-box {
-      font-size: 22px;
-      background: #f9f9f9;
-      border: 2px solid #27ae60;
-      border-radius: 12px;
-      padding: 30px;
-      min-width: 220px;
+
+    .time-blocks div {
+      text-align: left;
     }
-    .label {
-      font-weight: bold;
-      font-size: 16px;
-      color: #555;
-      margin-bottom: 6px;
+
+    .time-blocks h2 {
+      font-size: 36px;
+      margin: 10px 0;
+      color: white;
     }
-    .value {
-      font-size: 26px;
-      color: #000;
-    }
-    .status {
-      font-size: 28px;
-      margin-top: 20px;
-      color: #fff;
-      background: #27ae60;
-      display: inline-block;
-      padding: 10px 30px;
-      border-radius: 8px;
-    }
-    #hiddenMessage {
-      display: none;
-      padding: 100px 40px;
-      font-size: 42px;
-      color: #27ae60;
-      text-align: center;
-      background-color: #ffffff;
-    }
+
     .footer {
-      text-align: center;
+      background-color: #000;
+      color: white;
+      padding: 10px 30px;
       font-size: 16px;
-      padding: 20px;
-      color: #666;
+      display: flex;
+      justify-content: space-between;
     }
   </style>
 </head>
 <body>
-  <div id="hiddenMessage"></div>
 
   <div class="header">
-    <img src="elego-logo.png" alt="Elego Logo" />
+    <div class="flight-info">
+      <div class="flight-number" id="flightNumber">Flight EG204</div>
+      <div class="destination" id="destination">London</div>
+    </div>
+    <img src="elego-logo.png" class="logo" alt="Elego Logo" />
+    <div class="gate-status">
+      <div id="statusBadge" class="status-badge">ON TIME</div>
+      <div id="gate" class="gate">D7</div>
+    </div>
   </div>
 
-  <div class="content">
-    <div class="flight-row">
-      <div class="flight-box">
-        <div class="label">Flight</div>
-        <div id="flightNumber" class="value">—</div>
+  <div class="main">
+    <div class="boarding" id="boardingInfo">Boards in 29 minutes</div>
+
+    <div class="time-blocks">
+      <div>
+        <div>Departs</div>
+        <h2 id="departTime">11:36 AM</h2>
       </div>
-      <div class="flight-box">
-        <div class="label">Destination</div>
-        <div id="destination" class="value">—</div>
-      </div>
-      <div class="flight-box">
-        <div class="label">Gate</div>
-        <div id="gate" class="value">—</div>
+      <div>
+        <div>Arrives</div>
+        <h2 id="arrivalTime">2:41 PM</h2>
       </div>
     </div>
+  </div>
 
-    <div class="flight-row">
-      <div class="flight-box">
-        <div class="label">Departure</div>
-        <div id="departTime" class="value">—</div>
-      </div>
-      <div class="flight-box">
-        <div class="label">Arrival</div>
-        <div id="arrivalTime" class="value">—</div>
-      </div>
-      <div class="flight-box">
-        <div class="label">Duration</div>
-        <div id="flightDuration" class="value">—</div>
-      </div>
-    </div>
-
-    <div id="statusBadge" class="status">—</div>
-    <div id="boardingInfo" class="footer">—</div>
+  <div class="footer">
+    <div id="flightDuration">Flight time: 3h 2m</div>
+    <div id="currentTime">10:22 AM</div>
   </div>
 
   <script>
+    function pad(n) {
+      return n < 10 ? '0' + n : n;
+    }
+
+    function formatTime(date) {
+      let hours = date.getHours();
+      const minutes = pad(date.getMinutes());
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12 || 12;
+      return `${hours}:${minutes} ${ampm}`;
+    }
+
     function updateDisplay() {
       const data = JSON.parse(localStorage.getItem('flightData') || '{}');
-      const hiddenMode = data.hideAll;
-      const hiddenDiv = document.getElementById('hiddenMessage');
-      const mainContent = document.querySelector('.header').parentElement;
 
-      if (hiddenMode) {
-        mainContent.style.display = 'none';
-        hiddenDiv.style.display = 'block';
-        hiddenDiv.textContent = data.customMessage || 'Gate Not In Use';
-        return;
-      } else {
-        mainContent.style.display = 'block';
-        hiddenDiv.style.display = 'none';
-      }
-
-      document.getElementById('flightNumber').textContent = data.flight || '—';
+      document.getElementById('flightNumber').textContent = `Flight ${data.flight || '—'}`;
       document.getElementById('destination').textContent = data.destination || '—';
       document.getElementById('gate').textContent = data.gate || '—';
-      document.getElementById('departTime').textContent = data.time || '—';
-      document.getElementById('arrivalTime').textContent = data.arrival || '—';
-      document.getElementById('flightDuration').textContent = `Flight time: ${data.duration || '—'}`;
-      document.getElementById('statusBadge').textContent = (data.status || '—').toUpperCase();
 
-      // Boarding countdown logic
+      // Status Badge
+      const statusBadge = document.getElementById('statusBadge');
+      const status = (data.status || '—').toUpperCase();
+      statusBadge.textContent = status;
+
+      // Calculate boarding countdown
       const timeStr = data.time || '';
       const now = new Date();
-      let boardingMessage = data.status || '—';
+      let boardingMessage = status;
 
       if (timeStr.match(/\d{1,2}:\d{2} ?(AM|PM)/i)) {
         const timeParts = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
@@ -160,14 +189,28 @@
           boardingMessage = `Boards in ${diffMins} minutes`;
         } else if (diffMins <= 0 && diffMins > -15) {
           boardingMessage = "Final Call";
+        } else {
+          boardingMessage = status; // fallback
         }
       }
 
       document.getElementById('boardingInfo').textContent = boardingMessage;
+
+      document.getElementById('departTime').textContent = data.time || '—';
+      document.getElementById('arrivalTime').textContent = data.arrival || '—';
+      document.getElementById('flightDuration').textContent = `Flight time: ${data.duration || '—'}`;
+    }
+
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('currentTime').textContent = formatTime(now);
     }
 
     updateDisplay();
-    setInterval(updateDisplay, 30000); // update every 30s
+    updateClock();
+    setInterval(updateDisplay, 5000);
+    setInterval(updateClock, 1000);
   </script>
 </body>
 </html>
+
