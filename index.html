@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Elego Airways Control Panel</title>
+  <title>Elego 🌴Airways Control Panel</title>
   <meta charset="UTF-8" />
   <style>
     body {
@@ -17,7 +17,7 @@
       margin-top: 20px;
       font-weight: bold;
     }
-    input, select {
+    input, select, textarea {
       width: 100%;
       padding: 12px;
       margin-top: 6px;
@@ -60,57 +60,50 @@
   <input id="gate" placeholder="e.g. C4" />
 
   <label>Departure Time</label>
-  <input id="time" placeholder="e.g. 11:36 AM EDT" />
+  <input id="time" placeholder="e.g. 9:45 AM" />
 
   <label>Arrival Time</label>
-  <input id="arrival" placeholder="e.g. 2:41 PM" />
+  <input id="arrival" placeholder="e.g. 2:15 PM" />
 
   <label>Flight Duration</label>
-  <input id="duration" placeholder="e.g. 3h 2m" />
+  <input id="duration" placeholder="e.g. 6h 30m" />
 
   <label>Status</label>
-  <select id="status" onchange="handleStatusChange()">
-    <option value="On Time">On Time</option>
-    <option value="Boarding Now">Boarding Now</option>
-    <option value="Final Call">Final Call</option>
-    <option value="Delayed">Delayed</option>
-    <option value="Cancelled">Cancelled</option>
-    <option value="custom">Custom Message...</option>
-    <option value="messageOnly">Display Only Custom Message</option>
+  <select id="status">
+    <option>On Time</option>
+    <option>Boarding Now - Group 1</option>
+    <option>Boarding Now - Group 2</option>
+    <option>Final Call</option>
+    <option>Delayed</option>
+    <option>Cancelled</option>
+    <option>Other (Type Below)</option>
   </select>
 
-  <input id="customStatus" placeholder="Type custom message..." style="display:none; margin-top: 10px;" />
+  <label>Custom Status (if selected above)</label>
+  <input id="customStatus" placeholder="e.g. No aircraft assigned" />
+
+  <label><input type="checkbox" id="hideAll" /> Gate Not In Use Mode</label>
+  <label>Custom Message for Gate Not In Use</label>
+  <textarea id="customMessage" placeholder="e.g. Gate D7 is not in use right now..."></textarea>
 
   <button onclick="update()">Update Display</button>
 
   <script>
-    function handleStatusChange() {
-      const status = document.getElementById('status').value;
-      const customInput = document.getElementById('customStatus');
-
-      if (status === 'custom' || status === 'messageOnly') {
-        customInput.style.display = 'block';
-        customInput.placeholder = status === 'messageOnly' ? 'e.g. Gate not in use' : 'Type custom status...';
-      } else {
-        customInput.style.display = 'none';
-      }
-    }
-
     function update() {
-      const selectedStatus = document.getElementById('status').value;
-      const customText = document.getElementById('customStatus').value;
-
+      const isHidden = document.getElementById('hideAll').checked;
       const data = {
-        mode: selectedStatus === 'messageOnly' ? 'messageOnly' : 'normal',
         flight: document.getElementById('flight').value,
         destination: document.getElementById('destination').value,
         gate: document.getElementById('gate').value,
         time: document.getElementById('time').value,
         arrival: document.getElementById('arrival').value,
         duration: document.getElementById('duration').value,
-        status: selectedStatus === 'custom' || selectedStatus === 'messageOnly' ? customText : selectedStatus
+        status: document.getElementById('status').value === 'Other (Type Below)' ?
+                document.getElementById('customStatus').value :
+                document.getElementById('status').value,
+        hideAll: isHidden,
+        customMessage: document.getElementById('customMessage').value
       };
-
       localStorage.setItem('flightData', JSON.stringify(data));
       alert("Display updated! Open display.html to see it.");
     }
