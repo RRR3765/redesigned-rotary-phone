@@ -7,82 +7,99 @@
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background-color: #f0f0f0;
-      color: #1b1b1b;
+      background-color: #0a0a0a;
+      color: white;
     }
+
     .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 20px 40px;
-      background-color: #ffffff;
+      background-color: #0a0a0a;
       border-bottom: 4px solid #27ae60;
     }
+
     .logo {
       height: 50px;
     }
+
     .flight-info {
       display: flex;
       flex-direction: column;
     }
+
     .flight-number {
       font-size: 20px;
-      color: #666;
+      color: #aaa;
     }
+
     .destination {
-      font-size: 40px;
+      font-size: 42px;
       font-weight: bold;
+      color: #27ae60;
       margin-top: 5px;
     }
+
     .gate-status {
       display: flex;
       flex-direction: column;
       align-items: flex-end;
     }
+
     .status-badge {
-      background-color: #2ecc71;
+      background-color: #27ae60;
       color: white;
       padding: 6px 16px;
       border-radius: 20px;
       font-weight: bold;
       font-size: 14px;
+      text-transform: uppercase;
     }
+
     .gate {
       margin-top: 10px;
-      background-color: #1c7ed6;
+      background-color: #1c1c1c;
       color: white;
       font-size: 32px;
       font-weight: bold;
       padding: 10px 20px;
       border-radius: 12px;
+      border: 2px solid #27ae60;
     }
 
     .main {
-      background-color: #007bff;
+      background-color: #1c1c1c;
       color: white;
       padding: 40px;
       text-align: center;
     }
+
     .boarding {
       font-size: 28px;
       margin-bottom: 30px;
+      color: #27ae60;
     }
+
     .time-blocks {
       display: flex;
       justify-content: center;
       gap: 100px;
       font-size: 18px;
     }
+
     .time-blocks div {
       text-align: left;
     }
+
     .time-blocks h2 {
       font-size: 36px;
       margin: 10px 0;
+      color: white;
     }
 
     .footer {
-      background-color: #00264d;
+      background-color: #000;
       color: white;
       padding: 10px 30px;
       font-size: 16px;
@@ -111,7 +128,7 @@
     <div class="time-blocks">
       <div>
         <div>Departs</div>
-        <h2 id="departTime">11:36 AM EDT</h2>
+        <h2 id="departTime">11:36 AM</h2>
       </div>
       <div>
         <div>Arrives</div>
@@ -122,7 +139,7 @@
 
   <div class="footer">
     <div id="flightDuration">Flight time: 3h 2m</div>
-    <div id="currentTime">10:22 AM EDT</div>
+    <div id="currentTime">10:22 AM</div>
   </div>
 
   <script>
@@ -145,19 +162,41 @@
       document.getElementById('destination').textContent = data.destination || '—';
       document.getElementById('gate').textContent = data.gate || '—';
 
-      // Update status badge
+      // Status Badge
       const statusBadge = document.getElementById('statusBadge');
       const status = (data.status || '—').toUpperCase();
       statusBadge.textContent = status;
 
-      // Update boarding info
-      document.getElementById('boardingInfo').textContent = `Status: ${data.status || '—'}`;
+      // Calculate boarding countdown
+      const timeStr = data.time || '';
+      const now = new Date();
+      let boardingMessage = status;
 
-      // Depart / arrival
+      if (timeStr.match(/\d{1,2}:\d{2} ?(AM|PM)/i)) {
+        const timeParts = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+        let hours = parseInt(timeParts[1]);
+        const minutes = parseInt(timeParts[2]);
+        const ampm = timeParts[3].toUpperCase();
+        if (ampm === 'PM' && hours !== 12) hours += 12;
+        if (ampm === 'AM' && hours === 12) hours = 0;
+
+        const flightTime = new Date();
+        flightTime.setHours(hours, minutes, 0, 0);
+
+        const diffMins = Math.round((flightTime - now) / 60000);
+        if (diffMins > 0) {
+          boardingMessage = `Boards in ${diffMins} minutes`;
+        } else if (diffMins <= 0 && diffMins > -15) {
+          boardingMessage = "Final Call";
+        } else {
+          boardingMessage = status; // fallback
+        }
+      }
+
+      document.getElementById('boardingInfo').textContent = boardingMessage;
+
       document.getElementById('departTime').textContent = data.time || '—';
       document.getElementById('arrivalTime').textContent = data.arrival || '—';
-
-      // Optional: Flight duration
       document.getElementById('flightDuration').textContent = `Flight time: ${data.duration || '—'}`;
     }
 
