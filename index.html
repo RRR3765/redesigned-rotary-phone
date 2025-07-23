@@ -59,14 +59,19 @@
   <label>Gate</label>
   <input id="gate" placeholder="e.g. C4" />
 
-  <label>Time</label>
-  <input id="time" placeholder="e.g. 9:45 AM" />
+  <label>Departure Time</label>
+  <input id="time" placeholder="e.g. 11:36 AM EDT" />
+
+  <label>Arrival Time</label>
+  <input id="arrival" placeholder="e.g. 2:41 PM" />
+
+  <label>Flight Duration</label>
+  <input id="duration" placeholder="e.g. 3h 2m" />
 
   <label>Status</label>
   <select id="status" onchange="handleStatusChange()">
     <option value="On Time">On Time</option>
-    <option value="Boarding Now - Group 1">Boarding Now - Group 1</option>
-    <option value="Boarding Now - Group 2">Boarding Now - Group 2</option>
+    <option value="Boarding Now">Boarding Now</option>
     <option value="Final Call">Final Call</option>
     <option value="Delayed">Delayed</option>
     <option value="Cancelled">Cancelled</option>
@@ -101,6 +106,8 @@
         destination: document.getElementById('destination').value,
         gate: document.getElementById('gate').value,
         time: document.getElementById('time').value,
+        arrival: document.getElementById('arrival').value,
+        duration: document.getElementById('duration').value,
         status: selectedStatus === 'custom' || selectedStatus === 'messageOnly' ? customText : selectedStatus
       };
 
