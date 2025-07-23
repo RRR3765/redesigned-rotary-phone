@@ -1,103 +1,175 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Elego Airways Display</title>
+  <title>Elego Airways Flight Display</title>
   <meta charset="UTF-8" />
   <style>
     body {
-      background: #0a0a0a;
-      color: white;
+      margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      text-align: center;
-      padding: 40px;
+      background-color: #f0f0f0;
+      color: #1b1b1b;
     }
-    img {
-      width: 200px;
-      margin-bottom: 30px;
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      background-color: #ffffff;
+      border-bottom: 4px solid #27ae60;
     }
-    .panel {
-      padding: 30px;
-      border: 2px solid #27ae60;
-      border-radius: 12px;
-      max-width: 700px;
-      margin: auto;
-      background: rgba(255,255,255,0.05);
+    .logo {
+      height: 50px;
     }
-    .flight {
-      font-size: 48px;
-      margin-bottom: 10px;
+    .flight-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .flight-number {
+      font-size: 20px;
+      color: #666;
+    }
+    .destination {
+      font-size: 40px;
+      font-weight: bold;
+      margin-top: 5px;
+    }
+    .gate-status {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+    .status-badge {
+      background-color: #2ecc71;
+      color: white;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 14px;
     }
     .gate {
-      font-size: 40px;
-      color: #ccc;
-    }
-    .status {
-      font-size: 46px;
+      margin-top: 10px;
+      background-color: #1c7ed6;
+      color: white;
+      font-size: 32px;
       font-weight: bold;
-      margin-top: 30px;
-      color: #2ecc71;
+      padding: 10px 20px;
+      border-radius: 12px;
     }
-    .status.delayed { color: #e74c3c; }
-    .status.cancelled { color: #f1c40f; }
-    .status.custom { color: #3498db; }
 
-    .message-only {
-      font-size: 52px;
-      font-weight: bold;
-      color: #3498db;
-      margin-top: 100px;
+    .main {
+      background-color: #007bff;
+      color: white;
+      padding: 40px;
+      text-align: center;
+    }
+    .boarding {
+      font-size: 28px;
+      margin-bottom: 30px;
+    }
+    .time-blocks {
+      display: flex;
+      justify-content: center;
+      gap: 100px;
+      font-size: 18px;
+    }
+    .time-blocks div {
+      text-align: left;
+    }
+    .time-blocks h2 {
+      font-size: 36px;
+      margin: 10px 0;
+    }
+
+    .footer {
+      background-color: #00264d;
+      color: white;
+      padding: 10px 30px;
+      font-size: 16px;
+      display: flex;
+      justify-content: space-between;
     }
   </style>
 </head>
 <body>
-  <img src="elego-logo.png" alt="Elego Logo" />
-  <div id="panel" class="panel">
-    <div id="flightInfo" class="flight">Flight — to —</div>
-    <div id="gateInfo" class="gate">Gate — — —</div>
-    <div id="statusInfo" class="status">—</div>
+
+  <div class="header">
+    <div class="flight-info">
+      <div class="flight-number" id="flightNumber">Flight EG204</div>
+      <div class="destination" id="destination">London</div>
+    </div>
+    <img src="elego-logo.png" class="logo" alt="Elego Logo" />
+    <div class="gate-status">
+      <div id="statusBadge" class="status-badge">ON TIME</div>
+      <div id="gate" class="gate">D7</div>
+    </div>
   </div>
-  <div id="messageOnly" class="message-only" style="display:none;"></div>
+
+  <div class="main">
+    <div class="boarding" id="boardingInfo">Boards in 29 minutes</div>
+
+    <div class="time-blocks">
+      <div>
+        <div>Departs</div>
+        <h2 id="departTime">11:36 AM EDT</h2>
+      </div>
+      <div>
+        <div>Arrives</div>
+        <h2 id="arrivalTime">2:41 PM</h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div id="flightDuration">Flight time: 3h 2m</div>
+    <div id="currentTime">10:22 AM EDT</div>
+  </div>
 
   <script>
+    function pad(n) {
+      return n < 10 ? '0' + n : n;
+    }
+
+    function formatTime(date) {
+      let hours = date.getHours();
+      const minutes = pad(date.getMinutes());
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12 || 12;
+      return `${hours}:${minutes} ${ampm}`;
+    }
+
     function updateDisplay() {
       const data = JSON.parse(localStorage.getItem('flightData') || '{}');
 
-      const panel = document.getElementById('panel');
-      const msgOnly = document.getElementById('messageOnly');
-      const flightInfo = document.getElementById('flightInfo');
-      const gateInfo = document.getElementById('gateInfo');
-      const statusInfo = document.getElementById('statusInfo');
+      document.getElementById('flightNumber').textContent = `Flight ${data.flight || '—'}`;
+      document.getElementById('destination').textContent = data.destination || '—';
+      document.getElementById('gate').textContent = data.gate || '—';
 
-      if (data.mode === 'messageOnly') {
-        // Hide panel and show custom-only message
-        panel.style.display = 'none';
-        msgOnly.textContent = data.status || 'Message Only Mode';
-        msgOnly.style.display = 'block';
-      } else {
-        // Normal flight mode
-        panel.style.display = 'block';
-        msgOnly.style.display = 'none';
+      // Update status badge
+      const statusBadge = document.getElementById('statusBadge');
+      const status = (data.status || '—').toUpperCase();
+      statusBadge.textContent = status;
 
-        flightInfo.textContent = `Flight ${data.flight || '—'} to ${data.destination || '—'}`;
-        gateInfo.textContent = `Gate ${data.gate || '—'} — ${data.time || '—'}`;
+      // Update boarding info
+      document.getElementById('boardingInfo').textContent = `Status: ${data.status || '—'}`;
 
-        const status = data.status || '—';
-        statusInfo.textContent = status;
-        statusInfo.className = 'status';
+      // Depart / arrival
+      document.getElementById('departTime').textContent = data.time || '—';
+      document.getElementById('arrivalTime').textContent = data.arrival || '—';
 
-        const lower = status.toLowerCase();
-        if (lower.includes('delay')) {
-          statusInfo.classList.add('delayed');
-        } else if (lower.includes('cancel')) {
-          statusInfo.classList.add('cancelled');
-        } else {
-          statusInfo.classList.add('custom');
-        }
-      }
+      // Optional: Flight duration
+      document.getElementById('flightDuration').textContent = `Flight time: ${data.duration || '—'}`;
+    }
+
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('currentTime').textContent = formatTime(now);
     }
 
     updateDisplay();
-    setInterval(updateDisplay, 1000);
+    updateClock();
+    setInterval(updateDisplay, 5000);
+    setInterval(updateClock, 1000);
   </script>
 </body>
 </html>
