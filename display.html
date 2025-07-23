@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Elego Airways Display</title>
+  <meta charset="UTF-8" />
+  <style>
+    body {
+      background: #0a0a0a;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 40px;
+    }
+    img {
+      width: 200px;
+      margin-bottom: 30px;
+    }
+    .panel {
+      padding: 30px;
+      border: 2px solid #27ae60;
+      border-radius: 12px;
+      max-width: 700px;
+      margin: auto;
+      background: rgba(255,255,255,0.05);
+    }
+    .flight {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+    .gate {
+      font-size: 40px;
+      color: #ccc;
+    }
+    .status {
+      font-size: 46px;
+      font-weight: bold;
+      margin-top: 30px;
+      color: #2ecc71;
+    }
+    .status.delayed {
+      color: #e74c3c;
+    }
+    .status.cancelled {
+      color: #f1c40f;
+    }
+    .status.custom {
+      color: #3498db;
+    }
+  </style>
+</head>
+<body>
+  <img src="elego-logo.jpg" alt="Elego Logo" />
+  <div class="panel">
+    <div id="flightInfo" class="flight">Flight — to —</div>
+    <div id="gateInfo" class="gate">Gate — — —</div>
+    <div id="statusInfo" class="status">—</div>
+  </div>
+
+  <script>
+    function updateDisplay() {
+      const data = JSON.parse(localStorage.getItem('flightData') || '{}');
+      const flightInfo = document.getElementById('flightInfo');
+      const gateInfo = document.getElementById('gateInfo');
+      const statusInfo = document.getElementById('statusInfo');
+
+      flightInfo.textContent = `Flight ${data.flight || '—'} to ${data.destination || '—'}`;
+      gateInfo.textContent = `Gate ${data.gate || '—'} — ${data.time || '—'}`;
+
+      const status = data.status || '—';
+      statusInfo.textContent = status;
+      statusInfo.className = 'status'; // reset
+
+      const lower = status.toLowerCase();
+      if (lower.includes('delay')) {
+        statusInfo.classList.add('delayed');
+      } else if (lower.includes('cancel')) {
+        statusInfo.classList.add('cancelled');
+      } else {
+        statusInfo.classList.add('custom');
+      }
+    }
+
+    updateDisplay();
+    setInterval(updateDisplay, 1000);
+  </script>
+</body>
+</html>
