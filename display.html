@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -195,10 +194,12 @@
       }
 
       document.getElementById('boardingInfo').textContent = boardingMessage;
-
       document.getElementById('departTime').textContent = data.time || '—';
       document.getElementById('arrivalTime').textContent = data.arrival || '—';
       document.getElementById('flightDuration').textContent = `Flight time: ${data.duration || '—'}`;
+
+      // ✅ Optional: Force repaint (helps in rare cases)
+      document.body.offsetHeight;
     }
 
     function updateClock() {
@@ -213,4 +214,3 @@
   </script>
 </body>
 </html>
-
