@@ -62,6 +62,9 @@
   <label>Departure Time</label>
   <input id="time" placeholder="e.g. 11:36 AM EDT" />
 
+  <!-- ✅ Added boarding countdown preview -->
+  <div id="boardingCountdown" style="margin-top: 10px; color: #27ae60; font-size: 18px;"></div>
+
   <label>Arrival Time</label>
   <input id="arrival" placeholder="e.g. 2:41 PM" />
 
@@ -114,6 +117,42 @@
       localStorage.setItem('flightData', JSON.stringify(data));
       alert("Display updated! Open display.html to see it.");
     }
+
+    // ✅ Boarding countdown logic
+    function getBoardingCountdownText(departureTimeStr) {
+      const now = new Date();
+
+      const match = departureTimeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+      if (!match) return "";
+
+      let hours = parseInt(match[1]);
+      const minutes = parseInt(match[2]);
+      const ampm = match[3].toUpperCase();
+
+      if (ampm === 'PM' && hours !== 12) hours += 12;
+      if (ampm === 'AM' && hours === 12) hours = 0;
+
+      const flightTime = new Date();
+      flightTime.setHours(hours, minutes, 0, 0);
+
+      const diffMins = Math.round((flightTime - now) / 60000);
+
+      if (diffMins > 0) {
+        return `Boards in ${diffMins} minutes`;
+      } else if (diffMins <= 0 && diffMins > -15) {
+        return `Final Call`;
+      } else {
+        return "";
+      }
+    }
+
+    function updateBoardingCountdown() {
+      const timeStr = document.getElementById('time').value;
+      const msg = getBoardingCountdownText(timeStr);
+      document.getElementById('boardingCountdown').textContent = msg;
+    }
+
+    setInterval(updateBoardingCountdown, 1000);
   </script>
 </body>
 </html>
